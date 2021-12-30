@@ -12,8 +12,13 @@
         <p>Hi there!</p>
         <p>Welcome to the basics of <b>Blockchain</b>. In this page we will generate a basic SHA256 hash of any given input string</p>
         <ol>
-        <li>Create a basic html page, ensure the following elements html, head, body</li>
-        <li>Ensure that head has all the <a href="https://www.w3schools.com/html/html_head.asp">right tags</a></li>        
+        <li><p>Create a basic html page, ensure the following elements html, head, body</p></li>
+        <li><p>Ensure that head has all the <a href="https://www.w3schools.com/html/html_head.asp">right tags</a></p></li>
+        <li>
+            <p>Integrate with Crypto API to generate hash function for the word 'hi'. See <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API">Web Crypto API</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest">SubtleCrypto.digest()</a>
+                <div>The hash of '<b>hi</b>' is <span id="hashhi"></span></div>
+            </p>
+        </li>
         </ol>
 
         <p>Developer Notes:</p>
@@ -23,5 +28,18 @@
         </ol>
     </body>
     <script>
+        async function generateSHA256(message) {
+            const encodedMessage = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', encodedMessage);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hash = hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+            return hash;
+        }
+
+        generateSHA256("hi").then( hash => {
+            const element_hashhi = document.getElementById("hashhi");
+            element_hashhi.innerText = hash;
+        });
+
     </script>
 </html>
