@@ -14,7 +14,8 @@
             .strike-through {
                 text-decoration: line-through;
             }
-        </style>       
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>    
     <body>
         <h1>Blockchain Basics</h1>
@@ -53,21 +54,23 @@
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hash = hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
             return hash;
-        }
-
-        generateSHA256("hi").then( hash => {
-            const element_hashhi = document.getElementById("hashhi");
-            element_hashhi.innerText = hash;
-        });
+        }       
 
         function generateSHA256OnInput() {
-            const message = document.getElementById("inputText").value;
+            const message = $("#inputText").val();
             console.log("Updating ... " + message);
             generateSHA256(message).then( hash => {
-                const element = document.getElementById("outputHash");
-                element.innerText = hash;
+                console.log("Hash of " + message + " ... " + hash);
+                $("#outputHash").text(hash);                
             });
         }
+
+        $(document).ready(function() {
+            generateSHA256("hi").then( hash => {
+                console.log("Hash of hi ..." + hash);            
+                $("#hashhi").text(hash);
+            });
+        });
 
     </script>
 </html>
