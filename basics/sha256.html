@@ -8,19 +8,27 @@
         <title>Generate SHA256</title>
         <style>
             body {
-                background-color: white;
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
             .strike-through {
                 text-decoration: line-through;
             }
+            .valid {
+                background-color: lightgreen;
+            }
+            .invalid {
+                background-color: lightcoral;
+            }
+            
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>    
     <body>
         <h1>Blockchain Basics</h1>
         <p>Hi there!</p>
-        <p>Welcome to the basics of <b>Blockchain</b>. In this page we will generate a basic SHA256 hash of any given input string</p>
+        <p>Welcome to the basics of <b>Blockchain</b>. These pages are my attempt at internalizing the learning from <a href="https://andersbrownworth.com/blockchain/">Blockchain Demo by Anders Brownworth</a> In this page we will generate a basic SHA256 hash of any given input string</p>
+
+        <h3>Hash</h3>
         <ol>
             <li><p>Create a basic html page, ensure the following elements exist: html, head, body, script </p></li>
             <li><p>Ensure that head has all the <a href="https://www.w3schools.com/html/html_head.asp">right tags</a></p></li>
@@ -32,11 +40,35 @@
             <li>
                 <p>For any input text, generate the SHA256 automatically.
                     <div>
+                        <label>Data</label>
                         <input type="text" id="inputText" name="inputText" placeholder="enter text to generate hash" size="100" oninput="generateSHA256OnInput()"/>
+                        <label>Hash</label>
                         <p id="outputHash"></p>
-                    </div>
-                    
+                    </div>                    
                 </p>
+            </li>
+        </ol>
+
+        <h3>Block</h3>
+        <ol>
+            <li>
+                <p>Create a static block. Parts of a block : A Number, Nonce, Data together produce a Signed Hash - A hash starting with 4 zeroes. The main goal of this static block is to create a Block class object that has properties (number, nonce, data, hash, isvalid) methods for generating the hash, checking whether the hash and block are valid, displaying the block. Ideally this should be using React or some other framework. Using vanilla javascript for this exercise</p>                
+                <div id="block">
+                    <label>Number</label>
+                    <input readonly id="number" />
+                    <label>Nonce</label>
+                    <input readonly id="nonce" />
+                    <label>Data</label>
+                    <input readonly id="data" />                    
+                    <p>
+                        <label>Hash</label>
+                        <span id="hash"></span>
+                    </p>
+                    <p>
+                        <label>IsValidBlock</label>
+                        <span id="isValidBlock">false</span>
+                    </p>
+                </div>
             </li>
         </ol>
 
@@ -65,12 +97,76 @@
             });
         }
 
+        // Create a Block class 
+        // Properties: with a number (public get and set), nonce (public get and set), data (public get and set), hash (public get and private set)
+        // Methods: public generateHash, public isValidBlock, private isValidHash
+        const Block = {
+            number : 1,
+            nonce : 32904,
+            data : "Hello",
+            hash : "",
+
+            /*private*/ isValidHash : function() {
+                 // Check that the hash is a of length 256
+                 console.log("Hash length: " + this.hash.length);
+                 if (this.hash.length != 64) { return false; }
+                // Check if the hash only has valid characters.
+                // TODO!!!                
+                return true;
+            },
+
+            /*public*/ isValidBlock : function() {
+                // Check that the hash is a valid SHA256 hash
+                if (this.isValidHash() == false) { return false; }
+                console.log("isValidHash");
+
+                // Check that hash is a valid signrature
+                const begin = this.hash.slice(0, 4);
+                console.log("begin : " + begin);
+                if (begin != "0000") { return false; }
+                return true;
+            },
+
+            /*public*/ generateHash : function() {
+                const dataToHash = this.number.toString() + this.nonce.toString() + this.data;
+                console.log("Updating ... " + dataToHash);
+                generateSHA256(dataToHash).then( hash => {
+                    console.log("Hash of " + dataToHash + " ... " + hash);
+                    this.hash = hash;
+                    this.displayHash();
+                });
+            },          
+
+            /*private*/ displayHash : function() {
+                $("#hash").text(this.hash);
+                if (this.isValidBlock()) {
+                    $("#isValidBlock").text("Yes");
+                    $("#block").removeClass("invalid");
+                    $("#block").addClass("valid");
+                } else {
+                    $("#isValidBlock").text("No");
+                    $("#block").removeClass("valid");
+                    $("#block").addClass("invalid");
+                }
+            },
+
+            /*public*/ displayBlock : function(blockID) {
+                console.log("Displaying block" + this.number);
+                this.generateHash();
+                console.log("Displaying block" + this.number + " " + this.hash);
+                $(blockID + " #number").val(this.number);
+                $(blockID + " #nonce").val(this.nonce);
+                $(blockID + " #data").val(this.data);                
+            }
+        }
+
         $(document).ready(function() {
             generateSHA256("hi").then( hash => {
                 console.log("Hash of hi ..." + hash);            
                 $("#hashhi").text(hash);
             });
-        });
 
+            Block.displayBlock("#block");
+        });
     </script>
 </html>
