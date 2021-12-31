@@ -21,13 +21,22 @@
         <p>Hi there!</p>
         <p>Welcome to the basics of <b>Blockchain</b>. In this page we will generate a basic SHA256 hash of any given input string</p>
         <ol>
-        <li><p>Create a basic html page, ensure the following elements html, head, body</p></li>
-        <li><p>Ensure that head has all the <a href="https://www.w3schools.com/html/html_head.asp">right tags</a></p></li>
-        <li>
-            <p>Integrate with Crypto API to generate hash function for the word 'hi'. See <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API">Web Crypto API</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest">SubtleCrypto.digest()</a>
-                <div>The hash of '<b>hi</b>' is <span id="hashhi"></span></div>
-            </p>
-        </li>
+            <li><p>Create a basic html page, ensure the following elements exist: html, head, body, script </p></li>
+            <li><p>Ensure that head has all the <a href="https://www.w3schools.com/html/html_head.asp">right tags</a></p></li>
+            <li>
+                <p>Integrate with Crypto API to generate hash function for the word 'hi'. See <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API">Web Crypto API</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest">SubtleCrypto.digest()</a>
+                    <div>The hash of '<b>hi</b>' is <span id="hashhi"></span></div>
+                </p>
+            </li>
+            <li>
+                <p>For any input text, generate the SHA256 automatically.
+                    <div>
+                        <input type="text" id="inputText" name="inputText" placeholder="enter text to generate hash" size="100" oninput="generateSHA256OnInput()"/>
+                        <p id="outputHash"></p>
+                    </div>
+                    
+                </p>
+            </li>
         </ol>
 
         <h3>Developer Notes:</h3>
@@ -50,6 +59,15 @@
             const element_hashhi = document.getElementById("hashhi");
             element_hashhi.innerText = hash;
         });
+
+        function generateSHA256OnInput() {
+            const message = document.getElementById("inputText").value;
+            console.log("Updating ... " + message);
+            generateSHA256(message).then( hash => {
+                const element = document.getElementById("outputHash");
+                element.innerText = hash;
+            });
+        }
 
     </script>
 </html>
